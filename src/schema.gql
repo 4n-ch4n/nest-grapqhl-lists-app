@@ -2,6 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type AuthReponse {
+  token: String!
+  user: User!
+}
+
 input CreateItemInput {
   name: String!
   quantity: Float!
@@ -18,12 +23,26 @@ type Item {
 type Mutation {
   createItem(createItemInput: CreateItemInput!): Item!
   removeItem(id: ID!): Item!
+  signin(signinInput: SigninInput!): AuthReponse!
+  signup(signupInput: SignupInput!): AuthReponse!
   updateItem(updateItemInput: UpdateItemInput!): Item!
 }
 
 type Query {
   item(id: ID!): Item!
   items: [Item!]!
+  revalidate: AuthReponse!
+}
+
+input SigninInput {
+  email: String!
+  password: String!
+}
+
+input SignupInput {
+  email: String!
+  fullName: String!
+  password: String!
 }
 
 input UpdateItemInput {
@@ -31,4 +50,12 @@ input UpdateItemInput {
   name: String
   quantity: Float
   quantityUnits: String
+}
+
+type User {
+  email: String!
+  fullName: String!
+  id: ID!
+  isActive: Boolean!
+  roles: [String!]!
 }

@@ -11,6 +11,8 @@ import * as bcrypt from 'bcrypt';
 import { PrismaClient } from 'generated/prisma';
 import { User } from './entities/user.entity';
 import { SignupInput } from '../auth/dto/inputs/signup.input';
+import { ValidRoles } from '../auth/enums/valid-roles.enum';
+import { UpdateUserInput } from './dto/inputs';
 
 @Injectable()
 export class UsersService extends PrismaClient implements OnModuleInit {
@@ -33,9 +35,25 @@ export class UsersService extends PrismaClient implements OnModuleInit {
     }
   }
 
-  // async findAll(): Promise<User> {
-  //   return [];
-  // }
+  async findAll(roles: ValidRoles[]): Promise<User[]> {
+    if (roles.length === 0)
+      return (await this.user.findMany({
+        include: {
+          lastUpdateBy: true,
+        },
+      })) as User[];
+
+    return (await this.user.findMany({
+      where: {
+        roles: {
+          hasSome: roles,
+        },
+      },
+      include: {
+        lastUpdateBy: true,
+      },
+    })) as User[];
+  }
 
   async findOneByEmail(email: string): Promise<User> {
     try {
@@ -53,9 +71,47 @@ export class UsersService extends PrismaClient implements OnModuleInit {
     }
   }
 
-  // block(id: string): Promise<User> {
-  //   throw new Error('method not implemented');
-  // }
+  async update(
+    id: string,
+    updateUserInput: UpdateUserInput,
+    user: User,
+  ): Promise<User> {
+    await this.findOneById(id);
+
+    try {
+      return (await this.user.update({
+        where: { id },
+        data: {
+          lastUpdateBy: {
+            connect: { id: user.id },
+          },
+          ...updateUserInput,
+        },
+        include: {
+          lastUpdateBy: true,
+        },
+      })) as User;
+    } catch (error) {
+      this.handleDBErrors(error);
+    }
+  }
+
+  async block(id: string, user: User): Promise<User> {
+    await this.findOneById(id);
+
+    return (await this.user.update({
+      where: { id },
+      data: {
+        isActive: false,
+        lastUpdateBy: {
+          connect: { id: user.id },
+        },
+      },
+      include: {
+        lastUpdateBy: true,
+      },
+    })) as User;
+  }
 
   private handleDBErrors(error: any): never {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access

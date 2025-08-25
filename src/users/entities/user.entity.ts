@@ -18,4 +18,7 @@ export class User {
 
   @Field(() => Boolean)
   isActive: boolean;
+
+  @Field(() => User, { nullable: true })
+  lastUpdateBy?: User;
 }

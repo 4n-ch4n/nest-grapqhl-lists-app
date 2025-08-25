@@ -29,4 +29,7 @@ model User {
   password String
   roles String[] @default(["user"])
   isActive Boolean @default(true)
+  lastUpdateById String?
+  lastUpdateBy User? @relation("UserUpdates", fields: [lastUpdateById], references: [id])
+  updatedUsers User[] @relation("UserUpdates")
 }

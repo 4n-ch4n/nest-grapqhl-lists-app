@@ -21,17 +21,21 @@ type Item {
 }
 
 type Mutation {
+  blockUser(id: ID!): User!
   createItem(createItemInput: CreateItemInput!): Item!
   removeItem(id: ID!): Item!
   signin(signinInput: SigninInput!): AuthReponse!
   signup(signupInput: SignupInput!): AuthReponse!
   updateItem(updateItemInput: UpdateItemInput!): Item!
+  updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
 type Query {
   item(id: ID!): Item!
   items: [Item!]!
   revalidate: AuthReponse!
+  user(id: ID!): User!
+  users(roles: [ValidRoles!] = []): [User!]!
 }
 
 input SigninInput {
@@ -52,10 +56,25 @@ input UpdateItemInput {
   quantityUnits: String
 }
 
+input UpdateUserInput {
+  email: String
+  fullName: String
+  id: ID!
+  isActive: Boolean
+  roles: ValidRoles
+}
+
 type User {
   email: String!
   fullName: String!
   id: ID!
   isActive: Boolean!
+  lastUpdateBy: User
   roles: [String!]!
+}
+
+enum ValidRoles {
+  admin
+  superUser
+  user
 }

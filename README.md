@@ -11,6 +11,7 @@ This project is a GraphQL API built with NestJS, Prisma, and PostgreSQL. It serv
 - **GraphQL API**: Modern, flexible API for querying and mutating data.
 - **Authentication**: JWT-based authentication for securing endpoints.
 - **User Management**: CRUD operations for users with role-based access control.
+- **Database Seeding**: A dedicated module to populate the database with initial data for development.
 - **NestJS Framework**: A progressive Node.js framework for building efficient, reliable and scalable server-side applications.
 - **Prisma ORM**: Next-generation ORM for Node.js and TypeScript.
 - **PostgreSQL**: Powerful, open-source object-relational database system.
@@ -75,6 +76,16 @@ Once the application is running, you can access the GraphQL Playground to intera
 [http://localhost:3000/graphql](http://localhost:3000/graphql)
 
 ### Example Queries and Mutations
+
+**Execute the seed:**
+
+This will delete all data and populate the database with the initial data set.
+
+```graphql
+mutation {
+  executeSeed
+}
+```
 
 **Sign up a new user:**
 
@@ -155,7 +166,8 @@ query {
 │   ├── main.ts             # Application entry point
 │   ├── auth/               # Authentication module
 │   ├── items/              # Items feature module
-│   └── users/              # Users feature module
+│   ├── users/              # Users feature module
+│   └── seed/               # Database seeding module
 ├── docker-compose.yml      # Docker configuration
 └── package.json            # Project dependencies and scripts
 ```

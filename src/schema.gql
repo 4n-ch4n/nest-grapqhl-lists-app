@@ -23,6 +23,7 @@ type Mutation {
   blockUser(id: ID!): User!
   createItem(createItemInput: CreateItemInput!): Item!
   removeItem(id: ID!): Item!
+  seed: Boolean!
   signin(signinInput: SigninInput!): AuthReponse!
   signup(signupInput: SignupInput!): AuthReponse!
   updateItem(updateItemInput: UpdateItemInput!): Item!

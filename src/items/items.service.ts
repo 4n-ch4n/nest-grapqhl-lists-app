@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException, OnModuleInit } from '@nestjs/common';
-import { CreateItemInput, UpdateItemInput } from './dto/inputs';
 import { PrismaClient } from 'generated/prisma';
+import { CreateItemInput, UpdateItemInput } from './dto/inputs';
 import { Item } from './entities/item.entity';
 import { User } from '../users/entities/user.entity';
+import { PaginationArgs, SearchArgs } from '../common/dto/args';
 
 @Injectable()
 export class ItemsService extends PrismaClient implements OnModuleInit {
@@ -24,9 +25,26 @@ export class ItemsService extends PrismaClient implements OnModuleInit {
     });
   }
 
-  async findAll(user: User): Promise<Item[]> {
+  async findAll(
+    user: User,
+    paginationArgs: PaginationArgs,
+    searchArgs: SearchArgs,
+  ): Promise<Item[]> {
+    const { limit, offset } = paginationArgs;
+    const { search } = searchArgs;
+
     return await this.item.findMany({
-      where: { user: { id: user.id } },
+      take: limit,
+      skip: offset,
+      where: {
+        user: {
+          id: user.id,
+        },
+        name: {
+          contains: search,
+          mode: 'insensitive',
+        },
+      },
       include: { user: true },
     });
   }

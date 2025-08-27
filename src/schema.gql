@@ -32,10 +32,10 @@ type Mutation {
 
 type Query {
   item(id: ID!): Item!
-  items: [Item!]!
+  items(limit: Int = 10, offset: Int = 0, search: String): [Item!]!
   revalidate: AuthReponse!
   user(id: ID!): User!
-  users(roles: [ValidRoles!] = []): [User!]!
+  users(limit: Int = 10, offset: Int = 0, roles: [ValidRoles!] = [], search: String): [User!]!
 }
 
 input SigninInput {
@@ -69,7 +69,7 @@ type User {
   id: ID!
   isActive: Boolean!
   itemCount: Int!
-  items: [Item!]!
+  items(limit: Int = 10, offset: Int = 0, search: String): [Item!]!
   lastUpdateBy: User
   roles: [String!]!
 }

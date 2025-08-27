@@ -11,6 +11,7 @@ This project is a GraphQL API built with NestJS, Prisma, and PostgreSQL. It serv
 - **GraphQL API**: Modern, flexible API for querying and mutating data.
 - **Authentication**: JWT-based authentication for securing endpoints.
 - **User Management**: CRUD operations for users with role-based access control.
+- **Pagination and Searching**: Support for paginating and searching through lists.
 - **Database Seeding**: A dedicated module to populate the database with initial data for development.
 - **NestJS Framework**: A progressive Node.js framework for building efficient, reliable and scalable server-side applications.
 - **Prisma ORM**: Next-generation ORM for Node.js and TypeScript.
@@ -125,28 +126,22 @@ mutation {
 
 After signing in, remember to include the JWT in your Authorization header for protected queries: `Authorization: Bearer <your-token>`.
 
-**Create an Item (Authenticated):**
+**Find Items with Pagination and Search (Authenticated):**
 
 ```graphql
-mutation {
-  createItem(createItemInput: {
-    name: "Milk",
-    quantity: 2,
-    quantityUnits: "liters"
-  }) {
+query {
+  items(limit: 10, offset: 0, search: "milk") {
     id
     name
-    quantity
-    quantityUnits
   }
 }
 ```
 
-**Find all Users (Admin role required):**
+**Find all Users with Pagination and Search (Admin role required):**
 
 ```graphql
 query {
-  users {
+  users(limit: 10, offset: 0, search: "gmail") {
     id
     fullName
     email
@@ -165,6 +160,7 @@ query {
 │   ├── app.module.ts       # Main application module
 │   ├── main.ts             # Application entry point
 │   ├── auth/               # Authentication module
+│   ├── common/             # Common utilities (pagination, etc.)
 │   ├── items/              # Items feature module
 │   ├── users/              # Users feature module
 │   └── seed/               # Database seeding module

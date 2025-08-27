@@ -13,6 +13,7 @@ import { User } from './entities/user.entity';
 import { SignupInput } from '../auth/dto/inputs/signup.input';
 import { ValidRoles } from '../auth/enums/valid-roles.enum';
 import { UpdateUserInput } from './dto/inputs';
+import { PaginationArgs, SearchArgs } from '../common/dto/args';
 
 @Injectable()
 export class UsersService extends PrismaClient implements OnModuleInit {
@@ -38,9 +39,24 @@ export class UsersService extends PrismaClient implements OnModuleInit {
     }
   }
 
-  async findAll(roles: ValidRoles[]): Promise<User[]> {
+  async findAll(
+    roles: ValidRoles[],
+    paginationArgs: PaginationArgs,
+    searchArgs: SearchArgs,
+  ): Promise<User[]> {
+    const { limit, offset } = paginationArgs;
+    const { search } = searchArgs;
+
     if (roles.length === 0)
       return (await this.user.findMany({
+        take: limit,
+        skip: offset,
+        where: {
+          email: {
+            contains: search,
+            mode: 'insensitive',
+          },
+        },
         include: {
           lastUpdateBy: true,
           items: true,
@@ -48,9 +64,15 @@ export class UsersService extends PrismaClient implements OnModuleInit {
       })) as User[];
 
     return (await this.user.findMany({
+      take: limit,
+      skip: offset,
       where: {
         roles: {
           hasSome: roles,
+        },
+        email: {
+          contains: search,
+          mode: 'insensitive',
         },
       },
       include: {

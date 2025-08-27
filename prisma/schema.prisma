@@ -17,8 +17,10 @@ datasource db {
 model Item {
   id String @id @default(uuid())
   name String
-  quantity Int
   quantityUnits String?
+  userId String
+  user User @relation(fields: [userId], references: [id])
+  @@index(fields: [userId])
 }
 
 
@@ -32,4 +34,5 @@ model User {
   lastUpdateById String?
   lastUpdateBy User? @relation("UserUpdates", fields: [lastUpdateById], references: [id])
   updatedUsers User[] @relation("UserUpdates")
+  items Item[]
 }

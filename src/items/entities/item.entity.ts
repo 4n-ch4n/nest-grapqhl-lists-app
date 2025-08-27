@@ -1,5 +1,6 @@
-import { ObjectType, Field, ID, Float } from '@nestjs/graphql';
-
+import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { User } from '../../users/entities/user.entity';
+import { User as UserPrisma } from 'generated/prisma';
 @ObjectType()
 export class Item {
   @Field(() => ID)
@@ -8,9 +9,9 @@ export class Item {
   @Field(() => String)
   name: string;
 
-  @Field(() => Float)
-  quantity: number;
-
   @Field(() => String, { nullable: true })
   quantityUnits?: string | null;
+
+  @Field(() => User)
+  user: UserPrisma;
 }

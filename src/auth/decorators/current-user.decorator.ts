@@ -8,7 +8,7 @@ import { GqlExecutionContext } from '@nestjs/graphql';
 import { ValidRoles } from '../enums/valid-roles.enum';
 import { User } from '../../users/entities/user.entity';
 
-export const CurentUser = createParamDecorator(
+export const CurrentUser = createParamDecorator(
   (roles: ValidRoles[] = [], context: ExecutionContext) => {
     const ctx = GqlExecutionContext.create(context);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access

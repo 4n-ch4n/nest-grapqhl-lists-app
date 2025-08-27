@@ -1,4 +1,7 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { Item } from '../../items/entities/item.entity';
+import { Item as ItemPrsima } from 'generated/prisma';
+import { User as UserPrisma } from 'generated/prisma';
 
 @ObjectType()
 export class User {
@@ -20,5 +23,8 @@ export class User {
   isActive: boolean;
 
   @Field(() => User, { nullable: true })
-  lastUpdateBy?: User;
+  lastUpdateBy?: UserPrisma;
+
+  @Field(() => [Item])
+  items: ItemPrsima[];
 }

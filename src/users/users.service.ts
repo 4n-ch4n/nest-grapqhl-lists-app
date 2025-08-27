@@ -29,6 +29,9 @@ export class UsersService extends PrismaClient implements OnModuleInit {
           ...signupInput,
           password: bcrypt.hashSync(signupInput.password, 10),
         },
+        include: {
+          items: true,
+        },
       });
     } catch (error) {
       this.handleDBErrors(error);
@@ -40,6 +43,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
       return (await this.user.findMany({
         include: {
           lastUpdateBy: true,
+          items: true,
         },
       })) as User[];
 
@@ -51,13 +55,17 @@ export class UsersService extends PrismaClient implements OnModuleInit {
       },
       include: {
         lastUpdateBy: true,
+        items: true,
       },
     })) as User[];
   }
 
   async findOneByEmail(email: string): Promise<User> {
     try {
-      return await this.user.findUniqueOrThrow({ where: { email } });
+      return await this.user.findUniqueOrThrow({
+        where: { email },
+        include: { items: true },
+      });
     } catch (error) {
       this.handleDBErrors(error);
     }
@@ -65,7 +73,12 @@ export class UsersService extends PrismaClient implements OnModuleInit {
 
   async findOneById(id: string): Promise<User> {
     try {
-      return await this.user.findUniqueOrThrow({ where: { id } });
+      return await this.user.findUniqueOrThrow({
+        where: { id },
+        include: {
+          items: true,
+        },
+      });
     } catch (error) {
       this.handleDBErrors(error);
     }
@@ -89,6 +102,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
         },
         include: {
           lastUpdateBy: true,
+          items: true,
         },
       })) as User;
     } catch (error) {
@@ -109,6 +123,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
       },
       include: {
         lastUpdateBy: true,
+        items: true,
       },
     })) as User;
   }

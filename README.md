@@ -4,11 +4,13 @@
 
 # ListsApp - GraphQL API
 
-This project is a GraphQL API built with NestJS, Prisma, and PostgreSQL. It serves as a simple inventory management system for items, allowing for CRUD (Create, Read, Update, Delete) operations.
+This project is a GraphQL API built with NestJS, Prisma, and PostgreSQL. It serves as a simple inventory management system for items, allowing for CRUD (Create, Read, Update, Delete) operations with user authentication and authorization.
 
 ## Features
 
 - **GraphQL API**: Modern, flexible API for querying and mutating data.
+- **Authentication**: JWT-based authentication for securing endpoints.
+- **User Management**: CRUD operations for users with role-based access control.
 - **NestJS Framework**: A progressive Node.js framework for building efficient, reliable and scalable server-side applications.
 - **Prisma ORM**: Next-generation ORM for Node.js and TypeScript.
 - **PostgreSQL**: Powerful, open-source object-relational database system.
@@ -74,7 +76,45 @@ Once the application is running, you can access the GraphQL Playground to intera
 
 ### Example Queries and Mutations
 
-**Create an Item:**
+**Sign up a new user:**
+
+```graphql
+mutation {
+  signup(signupInput: {
+    fullName: "Test User",
+    email: "test@example.com",
+    password: "password123"
+  }) {
+    token
+    user {
+      id
+      fullName
+      email
+    }
+  }
+}
+```
+
+**Sign in:**
+
+```graphql
+mutation {
+  signin(signinInput: {
+    email: "test@example.com",
+    password: "password123"
+  }) {
+    token
+    user {
+      id
+      fullName
+    }
+  }
+}
+```
+
+After signing in, remember to include the JWT in your Authorization header for protected queries: `Authorization: Bearer <your-token>`.
+
+**Create an Item (Authenticated):**
 
 ```graphql
 mutation {
@@ -91,27 +131,15 @@ mutation {
 }
 ```
 
-**Find all Items:**
+**Find all Users (Admin role required):**
 
 ```graphql
 query {
-  items {
+  users {
     id
-    name
-    quantity
-  }
-}
-```
-
-**Find one Item:**
-
-```graphql
-query {
-  item(id: "your-item-id") {
-    id
-    name
-    quantity
-    quantityUnits
+    fullName
+    email
+    roles
   }
 }
 ```
@@ -125,11 +153,9 @@ query {
 ├── src/
 │   ├── app.module.ts       # Main application module
 │   ├── main.ts             # Application entry point
-│   └── items/              # Items feature module
-│       ├── items.module.ts
-│       ├── items.resolver.ts # GraphQL resolver
-│       ├── items.service.ts  # Business logic
-│       └── ...
+│   ├── auth/               # Authentication module
+│   ├── items/              # Items feature module
+│   └── users/              # Users feature module
 ├── docker-compose.yml      # Docker configuration
 └── package.json            # Project dependencies and scripts
 ```

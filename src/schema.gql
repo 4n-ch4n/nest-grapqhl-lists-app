@@ -9,15 +9,14 @@ type AuthReponse {
 
 input CreateItemInput {
   name: String!
-  quantity: Float!
   quantityUnits: String
 }
 
 type Item {
   id: ID!
   name: String!
-  quantity: Float!
   quantityUnits: String
+  user: User!
 }
 
 type Mutation {
@@ -52,7 +51,6 @@ input SignupInput {
 input UpdateItemInput {
   id: ID!
   name: String
-  quantity: Float
   quantityUnits: String
 }
 
@@ -69,6 +67,8 @@ type User {
   fullName: String!
   id: ID!
   isActive: Boolean!
+  itemCount: Int!
+  items: [Item!]!
   lastUpdateBy: User
   roles: [String!]!
 }

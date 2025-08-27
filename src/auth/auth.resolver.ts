@@ -4,7 +4,7 @@ import { AuthService } from './auth.service';
 import { SignupInput, SigninInput } from './dto/inputs';
 import { AuthReponse } from './types/auth-response.type';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { CurentUser } from './decorators/current-user.decorator';
+import { CurrentUser } from './decorators/current-user.decorator';
 import { User } from '../users/entities/user.entity';
 
 @Resolver(() => AuthReponse)
@@ -27,7 +27,7 @@ export class AuthResolver {
 
   @Query(() => AuthReponse, { name: 'revalidate' })
   @UseGuards(JwtAuthGuard)
-  revalidateToken(@CurentUser() user: User): AuthReponse {
+  revalidateToken(@CurrentUser() user: User): AuthReponse {
     return this.authService.revalidateToken(user);
   }
 }

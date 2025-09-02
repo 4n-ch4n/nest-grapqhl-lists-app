@@ -31,7 +31,7 @@ export class ItemsResolver {
   }
 
   @Query(() => Item, { name: 'item' })
-  findOne(
+  async findOne(
     @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
     @CurrentUser() user: User,
   ): Promise<Item> {
@@ -39,7 +39,7 @@ export class ItemsResolver {
   }
 
   @Mutation(() => Item)
-  updateItem(
+  async updateItem(
     @Args('updateItemInput') updateItemInput: UpdateItemInput,
     @CurrentUser() user: User,
   ): Promise<Item> {
@@ -47,7 +47,7 @@ export class ItemsResolver {
   }
 
   @Mutation(() => Item)
-  removeItem(
+  async removeItem(
     @Args('id', { type: () => ID }, ParseUUIDPipe) id: string,
     @CurrentUser() user: User,
   ): Promise<Item> {

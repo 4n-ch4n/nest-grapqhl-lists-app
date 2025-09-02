@@ -32,6 +32,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
         },
         include: {
           items: true,
+          lists: true,
         },
       });
     } catch (error) {
@@ -60,6 +61,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
         include: {
           lastUpdateBy: true,
           items: true,
+          lists: true,
         },
       })) as User[];
 
@@ -78,6 +80,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
       include: {
         lastUpdateBy: true,
         items: true,
+        lists: true,
       },
     })) as User[];
   }
@@ -86,7 +89,10 @@ export class UsersService extends PrismaClient implements OnModuleInit {
     try {
       return await this.user.findUniqueOrThrow({
         where: { email },
-        include: { items: true },
+        include: {
+          items: true,
+          lists: true,
+        },
       });
     } catch (error) {
       this.handleDBErrors(error);
@@ -99,6 +105,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
         where: { id },
         include: {
           items: true,
+          lists: true,
         },
       });
     } catch (error) {
@@ -125,6 +132,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
         include: {
           lastUpdateBy: true,
           items: true,
+          lists: true,
         },
       })) as User;
     } catch (error) {
@@ -146,6 +154,7 @@ export class UsersService extends PrismaClient implements OnModuleInit {
       include: {
         lastUpdateBy: true,
         items: true,
+        lists: true,
       },
     })) as User;
   }

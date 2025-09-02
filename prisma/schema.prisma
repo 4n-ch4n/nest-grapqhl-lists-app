@@ -20,9 +20,28 @@ model Item {
   quantityUnits String?
   userId String
   user User @relation(fields: [userId], references: [id])
+  listItem ListItem[]
   @@index(fields: [userId])
 }
 
+model List {
+  id String @id @default(uuid())
+  name String
+  userId String
+  user User @relation(fields: [userId], references: [id])
+  listItem ListItem[]
+  @@index(fields: [userId])
+}
+
+model ListItem {
+  id String @id @default(uuid())
+  quantity Int
+  completed Boolean
+  listId String
+  list List @relation(fields: [listId], references: [id])
+  itemId String
+  item Item @relation(fields: [itemId], references: [id])
+} 
 
 model User {
   id String @id @default(uuid())
@@ -35,4 +54,5 @@ model User {
   lastUpdateBy User? @relation("UserUpdates", fields: [lastUpdateById], references: [id])
   updatedUsers User[] @relation("UserUpdates")
   items Item[]
+  lists List[]
 }

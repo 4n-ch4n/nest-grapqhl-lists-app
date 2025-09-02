@@ -1,22 +1,18 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 import { User } from '../../users/entities/user.entity';
-import { ListItem } from '../../list-item/entities/list-item.entity';
 import { User as UserPrisma } from 'generated/prisma';
 import { ListItem as ListItemPrisma } from 'generated/prisma';
+
 @ObjectType()
-export class Item {
+export class List {
   @Field(() => ID)
   id: string;
 
   @Field(() => String)
   name: string;
 
-  @Field(() => String, { nullable: true })
-  quantityUnits?: string | null;
-
   @Field(() => User)
   user: UserPrisma;
 
-  @Field(() => [ListItem])
   listItem: ListItemPrisma[];
 }

@@ -12,27 +12,63 @@ input CreateItemInput {
   quantityUnits: String
 }
 
+input CreateListInput {
+  name: String!
+}
+
+input CreateListItemInput {
+  completed: Boolean = false
+  itemId: ID!
+  listId: ID!
+  quantity: Int = 0
+}
+
 type Item {
   id: ID!
+  listItem: [ListItem!]!
   name: String!
   quantityUnits: String
   user: User!
 }
 
+type List {
+  id: ID!
+  items(limit: Int = 10, offset: Int = 0, search: String): [ListItem!]!
+  name: String!
+  totalItems: Int!
+  user: User!
+}
+
+type ListItem {
+  completed: Boolean!
+  id: ID!
+  item: Item!
+  list: List!
+  quantity: Float!
+}
+
 type Mutation {
   blockUser(id: ID!): User!
   createItem(createItemInput: CreateItemInput!): Item!
+  createList(createListInput: CreateListInput!): List!
+  createListItem(createListItemInput: CreateListItemInput!): ListItem!
   removeItem(id: ID!): Item!
+  removeList(id: ID!): List!
   seed: Boolean!
   signin(signinInput: SigninInput!): AuthReponse!
   signup(signupInput: SignupInput!): AuthReponse!
   updateItem(updateItemInput: UpdateItemInput!): Item!
+  updateList(updateListInput: UpdateListInput!): List!
+  updateListItem(updateListItemInput: UpdateListItemInput!): ListItem!
   updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
 type Query {
   item(id: ID!): Item!
   items(limit: Int = 10, offset: Int = 0, search: String): [Item!]!
+  list(id: ID!): List!
+  listItem(id: ID!): ListItem!
+  lists(limit: Int = 10, offset: Int = 0, search: String): [List!]!
   revalidate: AuthReponse!
   user(id: ID!): User!
   users(limit: Int = 10, offset: Int = 0, roles: [ValidRoles!] = [], search: String): [User!]!
@@ -55,6 +91,19 @@ input UpdateItemInput {
   quantityUnits: String
 }
 
+input UpdateListInput {
+  id: ID!
+  name: String
+}
+
+input UpdateListItemInput {
+  completed: Boolean = false
+  id: ID!
+  itemId: ID
+  listId: ID
+  quantity: Int = 0
+}
+
 input UpdateUserInput {
   email: String
   fullName: String
@@ -71,6 +120,8 @@ type User {
   itemCount: Int!
   items(limit: Int = 10, offset: Int = 0, search: String): [Item!]!
   lastUpdateBy: User
+  listCount: Int!
+  lists(limit: Int = 10, offset: Int = 0, search: String): [List!]!
   roles: [String!]!
 }
 

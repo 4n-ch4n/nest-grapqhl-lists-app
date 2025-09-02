@@ -6,27 +6,28 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { PrismaClient } from 'generated/prisma';
-import { CreateItemInput, UpdateItemInput } from './dto/inputs';
-import { Item } from './entities/item.entity';
+import { CreateListInput } from './dto/create-list.input';
+import { UpdateListInput } from './dto/update-list.input';
+import { List } from './entities/list.entity';
 import { User } from '../users/entities/user.entity';
 import { PaginationArgs, SearchArgs } from '../common/dto/args';
 
 @Injectable()
-export class ItemsService extends PrismaClient implements OnModuleInit {
+export class ListsService extends PrismaClient implements OnModuleInit {
   private logger = new Logger('ItemsService');
 
   async onModuleInit() {
     await this.$connect();
   }
 
-  async create(createItemInput: CreateItemInput, user: User): Promise<Item> {
+  async create(createListInput: CreateListInput, user: User): Promise<List> {
     try {
-      return await this.item.create({
+      return await this.list.create({
         data: {
           user: {
             connect: { id: user.id },
           },
-          ...createItemInput,
+          ...createListInput,
         },
         include: {
           user: true,
@@ -42,17 +43,15 @@ export class ItemsService extends PrismaClient implements OnModuleInit {
     user: User,
     paginationArgs: PaginationArgs,
     searchArgs: SearchArgs,
-  ): Promise<Item[]> {
+  ): Promise<List[]> {
     const { limit, offset } = paginationArgs;
     const { search } = searchArgs;
 
-    return await this.item.findMany({
+    return await this.list.findMany({
       take: limit,
       skip: offset,
       where: {
-        user: {
-          id: user.id,
-        },
+        user: { id: user.id },
         name: {
           contains: search,
           mode: 'insensitive',
@@ -65,13 +64,11 @@ export class ItemsService extends PrismaClient implements OnModuleInit {
     });
   }
 
-  async findOne(id: string, user: User): Promise<Item> {
-    const item = await this.item.findUnique({
+  async findOne(id: string, user: User): Promise<List> {
+    const list = await this.list.findFirst({
       where: {
         id,
-        user: {
-          id: user.id,
-        },
+        user: { id: user.id },
       },
       include: {
         user: true,
@@ -79,22 +76,22 @@ export class ItemsService extends PrismaClient implements OnModuleInit {
       },
     });
 
-    if (!item) throw new NotFoundException(`Item with id: ${id} not found`);
+    if (!list) throw new NotFoundException(`List with id ${id} not found`);
 
-    return item;
+    return list;
   }
 
   async update(
     id: string,
-    updateItemInput: UpdateItemInput,
+    updateListInput: UpdateListInput,
     user: User,
-  ): Promise<Item> {
+  ): Promise<List> {
     await this.findOne(id, user);
 
     try {
-      return await this.item.update({
+      return this.list.update({
         where: { id },
-        data: updateItemInput,
+        data: updateListInput,
         include: {
           user: true,
           listItem: true,
@@ -105,22 +102,20 @@ export class ItemsService extends PrismaClient implements OnModuleInit {
     }
   }
 
-  async remove(id: string, user: User): Promise<Item> {
-    const item = await this.findOne(id, user);
-    await this.item.delete({
+  async remove(id: string, user: User) {
+    const list = await this.findOne(id, user);
+    await this.list.delete({
       where: {
-        id: item.id,
-        user: {
-          id: user.id,
-        },
+        id,
+        user: { id: user.id },
       },
     });
 
-    return item;
+    return list;
   }
 
-  async itemCountByUser(user: User): Promise<number> {
-    return await this.item.count({
+  async listCountByUser(user: User): Promise<number> {
+    return await this.list.count({
       where: {
         user: { id: user.id },
       },

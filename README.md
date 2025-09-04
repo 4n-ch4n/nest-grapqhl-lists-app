@@ -4,14 +4,15 @@
 
 # ListsApp - GraphQL API
 
-This project is a GraphQL API built with NestJS, Prisma, and PostgreSQL. It serves as a simple inventory management system for items, allowing for CRUD (Create, Read, Update, Delete) operations with user authentication and authorization.
+This project is a GraphQL API built with NestJS, Prisma, and PostgreSQL. It serves as a simple inventory management system for items, lists, and list items, allowing for CRUD operations with user authentication, authorization, pagination, and database seeding.
 
 ## Features
 
 - **GraphQL API**: Modern, flexible API for querying and mutating data.
 - **Authentication**: JWT-based authentication for securing endpoints.
 - **User Management**: CRUD operations for users with role-based access control.
-- **Pagination and Searching**: Support for paginating and searching through lists.
+- **Lists & List Items**: Create and manage lists and their items.
+- **Pagination and Searching**: Support for paginating and searching through lists and items.
 - **Database Seeding**: A dedicated module to populate the database with initial data for development.
 - **NestJS Framework**: A progressive Node.js framework for building efficient, reliable and scalable server-side applications.
 - **Prisma ORM**: Next-generation ORM for Node.js and TypeScript.
@@ -24,17 +25,25 @@ This project is a GraphQL API built with NestJS, Prisma, and PostgreSQL. It serv
 - [Docker](https://www.docker.com/products/docker-desktop/)
 - [npm](https://www.npmjs.com/)
 
+## Environment Setup
+
+### Local Development
+
+- Use the `.env` file for local development. Example:
+
+### Production
+
+- Use `.env.prod` for production deployments (e.g., DigitalOcean, Docker Compose):
+
+- When using Docker Compose, specify the env file with `--env-file .env.prod`.
+
 ## Getting Started
 
 ### 1. Clone the repository
 
 ### 2. Set up environment variables
 
-Copy the `.env.template` file to a new file named `.env` and update the variables as needed.
-
-```bash
-cp .env.template .env
-```
+Copy the `.env.template` file to a new file named `.env` and update the variables as needed for local, or use `.env.prod` for production.
 
 ### 3. Install dependencies
 
@@ -150,6 +159,60 @@ query {
 }
 ```
 
+**Create a List:**
+
+```graphql
+mutation {
+  createList(createListInput: {
+    name: "Groceries"
+  }) {
+    id
+    name
+  }
+}
+```
+
+**Add an Item to a List (Create ListItem):**
+
+```graphql
+mutation {
+  createListItem(createListItemInput: {
+    listId: "your-list-id",
+    itemId: "your-item-id",
+    quantity: 2
+  }) {
+    id
+    quantity
+    list {
+      id
+      name
+    }
+    item {
+      id
+      name
+    }
+  }
+}
+```
+
+**Find all Lists with their Items:**
+
+```graphql
+query {
+  lists {
+    id
+    name
+    items {
+      id
+      quantity
+      item {
+        name
+      }
+    }
+  }
+}
+```
+
 ## Project Structure
 
 ```
@@ -162,6 +225,8 @@ query {
 │   ├── auth/               # Authentication module
 │   ├── common/             # Common utilities (pagination, etc.)
 │   ├── items/              # Items feature module
+│   ├── lists/              # Lists feature module
+│   ├── list-item/          # ListItem feature module
 │   ├── users/              # Users feature module
 │   └── seed/               # Database seeding module
 ├── docker-compose.yml      # Docker configuration

@@ -1,0 +1,34 @@
+services: 
+  db:
+    image: postgres:17
+    restart: always
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    container_name: anylistDB
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+
+  listsapp:
+    depends_on:
+      - db
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    image: anthonycl98/graphql-lists-app
+    container_name: listsApp
+    restart: always
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      STAGE: ${STAGE}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_USERNAME: ${DB_USERNAME}
+      JWT_SECRET: ${JWT_SECRET}
+      DATABASE_URL: ${DATABASE_URL}
+      PORT: ${PORT}
